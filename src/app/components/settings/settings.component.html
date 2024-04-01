@@ -1,0 +1,26 @@
+<div class="container" [formGroup]="settingsForm">
+    <div class="form-group">
+        <mat-form-field>
+            <mat-label>Timer Interval (MS)</mat-label>
+            <input matInput type="number" formControlName="timer">
+        </mat-form-field>
+    </div>
+  
+    <div class="form-group">
+        <mat-form-field>
+            <mat-label>Array size</mat-label>
+            <input matInput type="number" formControlName="arraySize">
+        </mat-form-field>
+    </div>
+  
+    <div class="custom-ids" formArrayName="customIds">
+        @for (id of customIds.controls; let i = $index; track id) {
+            <div class="custom-id-group">
+                <label for="customId-{{i}}">Custom Id {{ i + 1 }}:</label>
+                <input type="text" id="customId-{{i}}" [formControlName]="i">
+            </div>
+        }
+    </div>
+  
+    <button mat-raised-button color="primary" (click)="changeSettings()">Apply Settings</button>
+</div>

@@ -1,0 +1,28 @@
+<table mat-table [dataSource]="data">
+    @for (column of columns; track column) {
+        <ng-container [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef>{{ column | uppercase }}</th>
+            @if (column === 'child') {
+                <td mat-cell *matCellDef="let emp">
+                    <table class="child">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>COLOR</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td class="child-id">{{ emp?.child?.id }}</td>
+                            <td class="child-color" [style.background-color]="emp?.child?.color">{{ emp?.child?.color }}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            } @else {
+                <td mat-cell *matCellDef="let emp" [style.background-color]="emp[column]">{{ emp[column] }}</td>
+            }
+        </ng-container>
+    }
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let emprow; columns: columns"></tr>
+</table>
