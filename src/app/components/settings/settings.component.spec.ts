@@ -1,39 +1,61 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SettingsComponent } from './settings.component';
-import { DataService } from '../../services/data.service';
-import { FormBuilder } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Data } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 describe('SettingsComponent', () => {
     let component: SettingsComponent;
     let fixture: ComponentFixture<SettingsComponent>;
-    let dataService: DataService;
-    // let booksServiceMock!: { updateWorkerSettings: jest.Mock }; // the mock value
-    
+
     beforeEach((): void => {
         TestBed.configureTestingModule({
-          imports: [SettingsComponent, BrowserAnimationsModule],
-        //   providers: [FormBuilder, {provide: DataService, useValue: booksServiceMock}]
-          providers: [FormBuilder, DataService]
-        }).compileComponents();
-
-        dataService = TestBed.inject(DataService);
-        fixture = TestBed.createComponent(SettingsComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-      });
-
-    it('should create', () => {
-        expect(component).toBeDefined();
+            imports: [SettingsComponent],
+            providers: [provideAnimations()],
+        });
     });
 
-    it('should call updateWorkerSettings on DataService with correct values', () => {
+    beforeEach((): void => {
+        fixture = TestBed.createComponent(SettingsComponent);
+        component = fixture.componentInstance;
+        jest.spyOn(component.onSettingsChange, 'emit');
+        fixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
+
+    it('should emit output when changeSettings executed', () => {
+        component.changeSettings();
+
+        expect(component.onSettingsChange.emit).toHaveBeenCalled();
+    });
+
+    it('should emit output when changeSettings executed with control values', () => {
         component.settingsForm.controls['timer'].setValue(1000);
         component.settingsForm.controls['arraySize'].setValue(1000);
         component.settingsForm.controls['customIds'].setValue(['1', '2', '3']);
-        
-        expect(dataService.updateWorkerSettings).toHaveBeenCalledWith(1000, 1000, ['1', '2', '3']);
-      });
+
+        component.changeSettings();
+
+        expect(component.onSettingsChange.emit).toHaveBeenCalledWith({
+            timer: 1000,
+            arraySize: 1000,
+            customIds: ['1', '2', '3'],
+        });
+    });
+
+    it('should not emit output when changeSettings executed with control value types', () => {
+        component.settingsForm.controls['timer'].setValue(1000);
+        component.settingsForm.controls['arraySize'].setValue(1000);
+        component.settingsForm.controls['customIds'].setValue(['1', '2', '3']);
+
+        component.changeSettings();
+
+        expect(component.onSettingsChange.emit).not.toHaveBeenCalledWith({
+            timer: '1000',
+            arraySize: '1000',
+            customIds: [1, 2, 3],
+        });
+    });
 });

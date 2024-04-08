@@ -1,8 +1,11 @@
 import { DataItem } from "./services/data.service";
 
+let interval: ReturnType<typeof setInterval>;
+
 addEventListener('message', ({ data }) => {
     const { timer, arraySize } = data;
-    setInterval(() => postMessage(Array.from({length: arraySize}, () => generateDataItem())), timer);
+    clearInterval(interval);
+    interval = setInterval(() => postMessage(Array.from({length: arraySize}, () => generateDataItem())), timer);
 });
 
 function generateDataItem(): DataItem {

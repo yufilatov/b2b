@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { SessionPreparationWorkerFactory } from '../worker.factory';
 
 export interface DataItem {
     id: string;
@@ -17,13 +18,17 @@ export interface DataItem {
 })
 export class DataService {
     #worker!: Worker;
-    // TO DO
     #dataStream = new BehaviorSubject<DataItem[] | null>(null);
     #customIds: string[] = [];
 
     constructor() {
+        this.initializeWorker();
+    }
+
+    initializeWorker() {
+        let worker = new SessionPreparationWorkerFactory();
         if (typeof Worker !== 'undefined') {
-            this.#worker = new Worker(new URL('./../worker', import.meta.url), { type: 'module' });
+            this.#worker = worker.get();
             this.#worker.onmessage = ({ data }) => { this.prepareData(data) };
         } else {
             console.error('Web Workers is not applied');

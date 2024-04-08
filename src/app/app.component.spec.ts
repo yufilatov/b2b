@@ -1,10 +1,22 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { DataService } from './services/data.service';
 
 describe('AppComponent', () => {
+    let component: AppComponent;
+    let fixture: ComponentFixture<AppComponent>;
+    let dataServiceMock: any;
+
     beforeEach(async () => {
+        dataServiceMock = {
+            getWorker: jest.fn()
+        }
         await TestBed.configureTestingModule({
             imports: [AppComponent],
+            providers: [{
+                provide: DataService,
+                useValue: dataServiceMock
+            }]
         }).compileComponents();
     });
 
